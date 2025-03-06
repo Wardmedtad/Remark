@@ -3,128 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copyable Remarks</title>
+    <title>Warranty and Remark Text Copier</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            line-height: 1.6;
+            background-color: #f5f5f5;
         }
-        .remark-container {
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        .remark-header {
-            background-color: #f4f4f4;
-            padding: 10px;
+        .section-header {
+            background-color: #4a6da7;
+            color: white;
+            padding: 10px 15px;
             font-weight: bold;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .remark-list {
+        .section-header:hover {
+            background-color: #3a5d97;
+        }
+        .section-content {
             padding: 0;
-            margin: 0;
         }
-        .remark-item {
+        .row {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        }
+        .row:last-child {
+            border-bottom: none;
+        }
+        .row-text {
+            flex-grow: 1;
         }
         .copy-btn {
-            background-color: #007bff;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            border-radius: 3px;
+            font-size: 14px;
+            transition: background-color 0.2s;
         }
         .copy-btn:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
-        .copy-all-btn {
-            background-color: #28a745;
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
             color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .copy-all-btn:hover {
-            background-color: #218838;
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        .collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
-    <h1>Remark</h1>
+    <h1>Warranty and Remark Text Copier</h1>
     
-    <div id="remarks-container"></div>
+    <div id="sections-container">
+        <!-- Sections will be dynamically added here -->
+    </div>
+    
+    <div id="copy-message" class="success-message">Text copied to clipboard!</div>
+    
+    <div class="status-bar" id="status-bar">Click the Copy button to copy text</div>
 
     <script>
-        const remarks = [
-            "|Warranty Lens 1 year| Prescriptions changed",
-            "| Warranty Lens 1 year | Customer requested prescription but can not get used.",
-            "|Warranty Lens 1 year | Customer used to FOP but can not get used.",
-            "| Warranty Frame 1 year| Factory error | Old Model :",
-            "| Exchange 1 Month | OUT OF WARRANTY | Change frame model | Old Model :",
-            "| Exchange 1 Month | OUT OF WARRANTY | Change type of lens to ...",
-            "| Warranty -50%Frame+Lens | OUT OF WARRANTY | Old Frame :",
-            "| Warranty -50%Frame Only | OUT OF WARRANTY | Old Frame :",
-            "| Warranrty -50%Lens Only | OUT OF WARRANTY",
-            "|2nd pair 25% Dis",
-            "3rd pair 25% Dis",
-            "| Prescription error | Customer feel uncomfortable",
-            "| Lens Redemption",
-            "| Extended 15% Dis"
+        // Define the sections and their content
+        const sections = [
+            {
+                title: "หมวด Warranty_2M",
+                rows: [
+                    "| Warranty_2M | Change PAL to two SV glasses",
+                    "| Warranty_2M | Change PAL to SV+Other top up",
+                    "| Warranty_2M | Change Col. to HMC"
+                ]
+            },
+            {
+                title: "หมวด Warranty_1Y",
+                rows: [
+                    "| Warranty_1Y | Update prescription after 6months",
+                    "| Warranty_1Y | CX needs to change to be FOP",
+                    "| Warranty_1Y | Changes following the using distance",
+                    "| Warranty_1Y | ***Special case> frame needs to be changed"
+                ]
+            },
+            {
+                title: "หมวด Prescription_Warranty2M",
+                rows: [
+                    "| Prescription_Warranty2M | Need more comfortability",
+                    "| Prescription_Warranty2M | Need more clear",
+                    "| Prescription_Warranty2M | CX is not appreciated with the given prescription",
+                    "| Prescription_Warranty2M | Changes following the using distance",
+                    "| Prescription_Warranty2M | CX needs to follow back her old power"
+                ]
+            },
+            {
+                title: "หมวด Prescription_Error2M",
+                rows: [
+                    "| Prescription_Error2M | Not comfotable",
+                    "| Prescription_Error2M | Not clear enough",
+                    "| Prescription_Error2M | Miscommunication"
+                ]
+            },
+            {
+                title: "หมวด Order_wrong",
+                rows: [
+                    "| Order_wrong | - | by"
+                ]
+            },
+            {
+                title: "หมวด Others_approved_by_Opt.",
+                rows: [
+                    "| Others_approved_by_Opt. | Machine error",
+                    "| Others_approved_by_Opt. | Miscommunication"
+                ]
+            },
+            {
+                title: "หมวด Edging_Error",
+                rows: [
+                    "| Edging_Error | Too loose",
+                    "| Edging_Error | Scratched",
+                    "| Edging_Error | Wrong shape",
+                    "| Edging_Error | Wrong lens type",
+                    "| Edging_Error | Wrong axis",
+                    "| Edging_Error | Lense cracked",
+                    "| Edging_Error | Swap side"
+                ]
+            },
+            {
+                title: "Warranty Frame",
+                rows: [
+                    "| Warranty Frame 1 year | Factory error | Old Model : "
+                ]
+            },
+            {
+                title: "Exchange 1 month",
+                rows: [
+                    "| Warranty_Exchange_1M | Change frame model | OUT OF WARRANTY | Old Model : ",
+                    "| Warranty_Exchange_1M | Change lens model",
+                    "| Warranty_Exchange_1M | Change whole set | OUT OF WARRANTY | Old Model : "
+                ]
+            },
+            {
+                title: "Warranty 50%",
+                rows: [
+                    "| Warranty 50%Frame+Lens | OUT OF WARRANTY | Old Frame : ",
+                    "| Warranty 50%Frame Only | OUT OF WARRANTY | Old Frame : ",
+                    "| Warranty 50%Lens Only | OUT OF WARRANTY"
+                ]
+            }
         ];
 
-        function createRemarksList() {
-            const container = document.getElementById('remarks-container');
+        // Create the sections in the DOM
+        const sectionsContainer = document.getElementById('sections-container');
+        
+        sections.forEach((section, index) => {
+            const sectionElement = document.createElement('div');
+            sectionElement.className = 'section';
             
-            const copyAllBtn = document.createElement('button');
-            copyAllBtn.textContent = 'Copy All Remarks';
-            copyAllBtn.className = 'copy-all-btn';
-            copyAllBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(remarks.join('\n')).then(() => {
-                    copyAllBtn.textContent = 'Copied!';
-                    setTimeout(() => {
-                        copyAllBtn.textContent = 'Copy All Remarks';
-                    }, 1500);
-                });
+            const headerElement = document.createElement('div');
+            headerElement.className = 'section-header';
+            headerElement.innerHTML = `${section.title} <span class="toggle-icon">▼</span>`;
+            
+            const contentElement = document.createElement('div');
+            contentElement.className = 'section-content';
+            
+            section.rows.forEach(row => {
+                const rowElement = document.createElement('div');
+                rowElement.className = 'row';
+                
+                const rowTextElement = document.createElement('div');
+                rowTextElement.className = 'row-text';
+                rowTextElement.textContent = row;
+                
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-btn';
+                copyButton.textContent = 'Copy';
+                copyButton.addEventListener('click', () => copyToClipboard(row));
+                
+                rowElement.appendChild(rowTextElement);
+                rowElement.appendChild(copyButton);
+                contentElement.appendChild(rowElement);
             });
-            container.appendChild(copyAllBtn);
-
-            remarks.forEach((remark, index) => {
-                const remarkItem = document.createElement('div');
-                remarkItem.className = 'remark-item';
-
-                const remarkText = document.createElement('span');
-                remarkText.textContent = remark;
-
-                const copyBtn = document.createElement('button');
-                copyBtn.textContent = 'Copy';
-                copyBtn.className = 'copy-btn';
-                copyBtn.addEventListener('click', () => {
-                    navigator.clipboard.writeText(remark).then(() => {
-                        copyBtn.textContent = 'Copied!';
-                        setTimeout(() => {
-                            copyBtn.textContent = 'Copy';
-                        }, 1500);
-                    });
-                });
-
-                remarkItem.appendChild(remarkText);
-                remarkItem.appendChild(copyBtn);
-                container.appendChild(remarkItem);
+            
+            sectionElement.appendChild(headerElement);
+            sectionElement.appendChild(contentElement);
+            sectionsContainer.appendChild(sectionElement);
+            
+            // Add toggle functionality
+            headerElement.addEventListener('click', () => {
+                headerElement.classList.toggle('collapsed');
+                contentElement.style.display = contentElement.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+        
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const copyMessage = document.getElementById('copy-message');
+                copyMessage.style.opacity = '1';
+                document.getElementById('status-bar').textContent = `Copied: ${text}`;
+                
+                setTimeout(() => {
+                    copyMessage.style.opacity = '0';
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                document.getElementById('status-bar').textContent = 'Failed to copy text';
             });
         }
-
-        // Initialize the remarks list when the page loads
-        window.onload = createRemarksList;
     </script>
 </body>
 </html>
